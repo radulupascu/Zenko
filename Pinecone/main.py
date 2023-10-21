@@ -1,18 +1,24 @@
 import pinecone as pc
 import pandas as pd
 from langchain.document_loaders.csv_loader import CSVLoader
-
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+#from langchain.vectorstores import Pinecone
 
 loader = CSVLoader(file_path='../data/FDV_TRANSN_updated.csv', csv_args={
     'delimiter': ',',
     'quotechar': '"',
-
-
-
 })
 data = loader.load()
 
-print(data)
+text_splitter=RecursiveCharacterTextSplitter(chunk_size=1000 ,chunk_overlap=0  )
+texts = text_splitter.split_documents(data)
+
+#print(texts[3])
+
+
+
+embeddings = OpenAIEmbeddings (OPENAI_API_KEY = open("../API_KEY", "r").read())
  
 # initialize connection to pc (get API key at app.pc.io)
 pc.init(
@@ -25,8 +31,10 @@ index_name = "database1"
 if index_name not in pc.list_indexes():
     pc.create_index(index_name=index_name, dimension=1536, metric='euclidian')
 
+
+
 # pc.create_index('test', dimension=2)
-#index=pc.Index(index_name)
+index=pc.Index(index_name)
 
 
 
