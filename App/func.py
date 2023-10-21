@@ -23,9 +23,8 @@ def get_gpt_response_content(user_message):
   # Get GPT responses to messages
   response = openai.ChatCompletion.create(
     model = "gpt-4",
-    messages = [
-      {"role": "user", "content": user_message}
-    ]
+    messages = 
+      user_message
   )
   return response["choices"][0]["message"]["content"]
 
