@@ -1,23 +1,5 @@
 import openai
-from transformers import BertTokenizer, BertModel
-import torch
 
-# Load pre-trained BERT tokenizer and model
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-model = BertModel.from_pretrained('bert-base-uncased')
-
-def text_to_vector(text):
-    # Tokenize input text
-    inputs = tokenizer(text, return_tensors='pt', truncation=True, padding=True, max_length=512)
-    
-    # Get BERT embeddings
-    with torch.no_grad():
-        outputs = model(**inputs)
-    
-    # Use the [CLS] token embedding as the representation of the text
-    vector = outputs.last_hidden_state[:, 0, :].squeeze().numpy()
-    
-    return vector
 
 def get_gpt_response(user_message):
   # Get GPT responses to messages
@@ -54,6 +36,4 @@ while True:
     print("Alt-Shift:", assistant_response.strip("\n").strip())
     chat_log.append({"role": "assistant",
      "content": assistant_response.strip("\n").strip()})
-    
-    # vector = text_to_vector(assistant_response.strip("\n").strip())
 
