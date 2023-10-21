@@ -1,6 +1,6 @@
 import openai
 
-API_KEY = open("..\API_KEY", "r").read()
+API_KEY = open("../API_KEY", "r").read()
 openai.api_key = API_KEY
 
 response = openai.ChatCompletion.create(
