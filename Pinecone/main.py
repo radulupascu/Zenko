@@ -8,10 +8,17 @@ pc.init(
 )
 #pc.create_index('database1', dimension=768)
 #print(pc.list_indexes())
+pc.create_index('test', dimension=2)
+index=pc.Index('test')
 
-df = pd.read_csv('../data/FDV_TRANSN_updated.csv')
+index.upsert([
+    ('Pisica', [0. , 0.]),
+    ('Caine', [0. , 0.])
+])
+
+#df = pd.read_csv('../data/FDV_TRANSN_updated.csv')
 #df.dropna(inplace=True)
-print(df)
+#print(df)
 
 # index.query(
 #     queries=[2. , 3. , 4.],
