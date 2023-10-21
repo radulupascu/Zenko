@@ -5,3 +5,6 @@ def load_pdf(PATH):
   load_dotenv()
   loader = PyPDFLoader(PATH)
   return loader.load()
+
+def add_data():
+  pass
