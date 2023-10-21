@@ -3,18 +3,28 @@ import openai
 try:
   API_KEY = open("API_KEY", "r").read()
 except FileNotFoundError:
-  API_KEY = "default_api_key"
-
+  API_KEY = "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"
 
 openai.api_key = API_KEY
 
-response = openai.ChatCompletion.create(
-  model = "gpt-3.5-turbo",
-  messages = [
-    {
-      "role": "user", "content": "Hello, who are you?"
-    },
-  ]
-)
+chat_log = []
 
-print(response)
+print("Type quit to exit")
+while True:
+  user_message = input("ASK: ")
+  if user_message.lower() == "quit":
+    break
+  else:
+    chat_log.append({"role": "user", "content": user_message})
+
+    response = openai.ChatCompletion.create(
+      model = "gpt-3.5-turbo",
+      messages = [
+        chat_log[-1]
+      ]
+    )
+    assistant_response = response["choices"][0]["message"]["content"]
+    print("Alt-Shift:", assistant_response.strip("\n").strip())
+    chat_log.append({"role": "assistant",
+     "content": assistant_response.strip("\n").strip()})
+
