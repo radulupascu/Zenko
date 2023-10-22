@@ -33,3 +33,4 @@ def parse_gpt_response(response):
   response = response.strip("\n").strip()
   response = response.replace("Alt-Shift:", "")
   return response
+  
