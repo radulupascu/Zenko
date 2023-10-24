@@ -1,0 +1,111 @@
+﻿@page "/"
+@using Newtonsoft.Json;
+@using System.Text;
+
+<PageTitle>Chatbot</PageTitle>
+
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <p>@testing</p>
+        </div>
+        <div class="col-4">
+            <div class="messages">
+                @for (int i = 0; i < messages.Count; i++)
+                {
+                    @if (i % 2 == 0)
+                    {
+                        <div class="question">@messages[i]</div>
+                    }
+                    else
+                    {
+                        <div class="response">@messages[i]</div>
+                    }
+                }
+
+            </div>
+            <div class="textMessage">
+                <input @bind="message" placeholder="Type your message here..."  type="message" @onkeydown="@Enter" />
+                <button @onclick="SendMessage">Send</button>
+                
+
+            </div>
+        </div>
+        <div class="col-4">
+        </div>
+
+    </div>
+</div>
+
+@code {
+    public string message;
+    public string testing;
+    public List<string> messages = new List<string>();
+    private static HttpClient Http = new HttpClient();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+    public async Task Enter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            await SendMessage();
+        }
+    }
+    public async Task SendMessage()
+    {
+        using (HttpClient Http = new HttpClient())
+        {
+            messages.Add(message);
+
+            // WARNING: This is insecure. API keys should not be hardcoded.
+            var apiKey = "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";
+
+            Http.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+
+            var jsonContent = new
+            {
+                prompt = message,
+                model = "text-davinci-003",
+                max_tokens = 1000
+            };
+            
+
+            try
+            {
+                //var jsonObj = JsonConvert.SerializeObject(jsonContent);
+                //var newJson = new StringContent(jsonObj, Encoding.UTF8, "application/json");
+                //var newJson = new StringContent(, Encoding.UTF8, "application/json");
+                //Console.WriteLine(newJson);
+                
+                
+                var responseContent = await Http.PostAsJsonAsync("http://127.0.0.1:8000/chatbot", jsonContent);
+                if (responseContent.IsSuccessStatusCode)
+                {
+                    var resContext = await responseContent.Content.ReadAsStringAsync();
+
+                    // Deserialize the response
+                    var data = JsonConvert.DeserializeObject<Dictionary<string, string>>(resContext);
+
+                    if (data.ContainsKey("assistant_response"))
+                    {
+                        messages.Add(data["assistant_response"]);
+                        // This seems like a placeholder, ensure it's properly handled in production
+                    }
+                    else
+                    {
+                        // Placeholder again
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                messages.Add($"Error: {ex.Message}");
+            }
+        }
+    }
+    
+}
